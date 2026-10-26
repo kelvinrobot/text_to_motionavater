@@ -1,0 +1,81 @@
+{
+  "fps": 20,
+  "frame_dimension": 133,
+  "rotation_format": "axis angle in radians, relative to the parent joint, vector length is the angle",
+  "upper_body": {
+    "start": 0,
+    "end": 30,
+    "joints": [
+      { "name": "neck", "vrm_bone": "neck", "columns": [0, 1, 2] },
+      { "name": "first_collar", "vrm_bone": "leftShoulder", "columns": [3, 4, 5] },
+      { "name": "second_collar", "vrm_bone": "rightShoulder", "columns": [6, 7, 8] },
+      { "name": "head", "vrm_bone": "head", "columns": [9, 10, 11] },
+      { "name": "first_shoulder", "vrm_bone": "leftUpperArm", "columns": [12, 13, 14] },
+      { "name": "second_shoulder", "vrm_bone": "rightUpperArm", "columns": [15, 16, 17] },
+      { "name": "first_elbow", "vrm_bone": "leftLowerArm", "columns": [18, 19, 20] },
+      { "name": "second_elbow", "vrm_bone": "rightLowerArm", "columns": [21, 22, 23] },
+      { "name": "first_wrist", "vrm_bone": "leftHand", "columns": [24, 25, 26] },
+      { "name": "second_wrist", "vrm_bone": "rightHand", "columns": [27, 28, 29] }
+    ]
+  },
+  "first_hand_block": {
+    "start": 30,
+    "end": 75,
+    "joints": [
+      { "name": "index1", "vrm_bone": "leftIndexProximal", "columns": [30, 31, 32] },
+      { "name": "index2", "vrm_bone": "leftIndexIntermediate", "columns": [33, 34, 35] },
+      { "name": "index3", "vrm_bone": "leftIndexDistal", "columns": [36, 37, 38] },
+      { "name": "middle1", "vrm_bone": "leftMiddleProximal", "columns": [39, 40, 41] },
+      { "name": "middle2", "vrm_bone": "leftMiddleIntermediate", "columns": [42, 43, 44] },
+      { "name": "middle3", "vrm_bone": "leftMiddleDistal", "columns": [45, 46, 47] },
+      { "name": "pinky1", "vrm_bone": "leftLittleProximal", "columns": [48, 49, 50] },
+      { "name": "pinky2", "vrm_bone": "leftLittleIntermediate", "columns": [51, 52, 53] },
+      { "name": "pinky3", "vrm_bone": "leftLittleDistal", "columns": [54, 55, 56] },
+      { "name": "ring1", "vrm_bone": "leftRingProximal", "columns": [57, 58, 59] },
+      { "name": "ring2", "vrm_bone": "leftRingIntermediate", "columns": [60, 61, 62] },
+      { "name": "ring3", "vrm_bone": "leftRingDistal", "columns": [63, 64, 65] },
+      { "name": "thumb1", "vrm_bone": "leftThumbMetacarpal", "columns": [66, 67, 68] },
+      { "name": "thumb2", "vrm_bone": "leftThumbProximal", "columns": [69, 70, 71] },
+      { "name": "thumb3", "vrm_bone": "leftThumbDistal", "columns": [72, 73, 74] }
+    ]
+  },
+  "second_hand_block": {
+    "start": 75,
+    "end": 120,
+    "joints": [
+      { "name": "index1", "vrm_bone": "rightIndexProximal", "columns": [75, 76, 77] },
+      { "name": "index2", "vrm_bone": "rightIndexIntermediate", "columns": [78, 79, 80] },
+      { "name": "index3", "vrm_bone": "rightIndexDistal", "columns": [81, 82, 83] },
+      { "name": "middle1", "vrm_bone": "rightMiddleProximal", "columns": [84, 85, 86] },
+      { "name": "middle2", "vrm_bone": "rightMiddleIntermediate", "columns": [87, 88, 89] },
+      { "name": "middle3", "vrm_bone": "rightMiddleDistal", "columns": [90, 91, 92] },
+      { "name": "pinky1", "vrm_bone": "rightLittleProximal", "columns": [93, 94, 95] },
+      { "name": "pinky2", "vrm_bone": "rightLittleIntermediate", "columns": [96, 97, 98] },
+      { "name": "pinky3", "vrm_bone": "rightLittleDistal", "columns": [99, 100, 101] },
+      { "name": "ring1", "vrm_bone": "rightRingProximal", "columns": [102, 103, 104] },
+      { "name": "ring2", "vrm_bone": "rightRingIntermediate", "columns": [105, 106, 107] },
+      { "name": "ring3", "vrm_bone": "rightRingDistal", "columns": [108, 109, 110] },
+      { "name": "thumb1", "vrm_bone": "rightThumbMetacarpal", "columns": [111, 112, 113] },
+      { "name": "thumb2", "vrm_bone": "rightThumbProximal", "columns": [114, 115, 116] },
+      { "name": "thumb3", "vrm_bone": "rightThumbDistal", "columns": [117, 118, 119] }
+    ]
+  },
+  "jaw": {
+    "columns": [120, 121, 122]
+  },
+  "expression": {
+    "columns": [123, 124, 125, 126, 127, 128, 129, 130, 131, 132]
+  },
+  "mean": [
+    -0.13625, 0.050579, -0.134551, 0.015466, 0.412431, 0.144873, 0.033051, -0.419172, -0.178446, 0.039924, 0.024593, 0.017813, -0.041679, 0.353629, 0.755628, 0.027638, -0.398045, -0.745942, -0.144109, 1.476001, -0.468645, -0.064231, -1.684289, 0.564591, 0.118776, 0.217904, -0.263618, 0.112877, -0.192671, 0.321634, -0.17201, 0.23631, -0.626904, -0.108565, -0.136833, -0.34718, -0.078444, -0.195088, -0.393544, 0.062058, 0.066762, -0.910366, 0.316193, 0.101067, -0.509, -0.008294, -0.106417, -0.537051, 0.262085, -0.531687, -0.730914, 0.506154, 0.041157, -0.45399, 0.350207, -0.185366, -0.326514, -0.020477, -0.188847, -0.875324, 0.543862, -0.019919, -0.537148, 0.236688, -0.184283, -0.545369, -0.897594, 0.308062, 0.258159, 0.617764, 0.026236, -0.382527, -0.378326, 0.168811, -0.133997, -0.168931, 0.246875, -0.642846, -0.139705, -0.128205, -0.444568, -0.068236, -0.206072, -0.419384, 0.106119, 0.09367, -1.016541, 0.307863, 0.131862, -0.546652, 0.002163, -0.110663, -0.578517, 0.323664, -0.493228, -0.827726, 0.546581, 0.020514, -0.522869, 0.385974, -0.216683, -0.334799, 0.014617, -0.192013, -1.014783, 0.580789, -0.031918, -0.637964, 0.26175, -0.20089, -0.609888, -0.969701, 0.30142, 0.209566, 0.6036, 0.040912, -0.386203, -0.453688, 0.249948, -0.161653, -0.009672, 0.008068, -0.004495, -0.006743, 0.127997, -1.270555, 0.21155, 0.030582, -0.2456, -0.542805, 0.185586, -0.231081, -0.051637
+  ],
+  "std": [
+    0.071168, 0.029055, 0.050211, 0.051006, 0.073395, 0.120526, 0.064213, 0.073127, 0.128118, 0.124916, 0.039792, 0.05536, 0.084406, 0.084708, 0.113556, 0.104294, 0.099544, 0.134562, 0.125608, 0.18723, 0.127498, 0.121041, 0.150539, 0.118858, 0.191963, 0.075051, 0.143124, 0.154613, 0.076692, 0.135522, 0.05816, 0.15804, 0.376912, 0.101137, 0.086949, 0.555803, 0.155279, 0.156145, 0.283669, 0.176163, 0.137956, 0.41995, 0.050312, 0.080973, 0.547749, 0.054901, 0.114454, 0.284266, 0.350809, 0.229739, 0.40295, 0.31049, 0.182549, 0.42174, 0.177125, 0.124096, 0.265695, 0.174423, 0.131142, 0.432057, 0.142692, 0.107851, 0.535409, 0.076688, 0.15571, 0.272091, 0.2235, 0.190803, 0.161296, 0.106417, 0.116217, 0.127514, 0.22167, 0.281364, 0.355188, 0.066959, 0.153622, 0.417524, 0.119731, 0.087765, 0.551852, 0.149788, 0.156756, 0.295824, 0.185491, 0.155665, 0.483395, 0.048928, 0.083628, 0.508681, 0.059228, 0.105318, 0.299685, 0.374073, 0.218714, 0.451184, 0.313749, 0.171762, 0.402852, 0.177777, 0.115079, 0.269137, 0.170816, 0.134958, 0.466467, 0.143699, 0.105505, 0.501421, 0.080349, 0.13092, 0.282398, 0.220549, 0.165174, 0.16669, 0.113596, 0.128903, 0.120966, 0.219323, 0.272789, 0.328183, 0.033665, 0.023426, 0.008144, 0.057317, 0.101084, 0.23112, 0.104137, 0.122858, 0.15757, 0.078952, 0.064561, 0.062326, 0.052445
+  ],
+  "assumptions_to_verify": [
+    "The first joint of each body pair may be the left side or the right side.",
+    "The two hand blocks have the same sign pattern, so one of them probably needs y and z negated.",
+    "The finger numbers may be absolute rotations from a flat hand, or offsets from a slightly curled average hand.",
+    "Face expression values cannot drive a VRM face and are ignored."
+  ]
+}

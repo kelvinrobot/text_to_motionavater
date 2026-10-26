@@ -1,0 +1,253 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+  width: 100%;
+  background: #0d1321;
+  color: #edf2ff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  border-radius: 8px;
+  background: #1b2a41;
+  color: #edf2ff;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+textarea {
+  width: 100%;
+  resize: vertical;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: #111827;
+  color: #edf2ff;
+  padding: 0.75rem;
+}
+
+.application-shell {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.top-bar,
+.avatar-panel,
+.input-panel,
+.log-panel {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.status-group,
+.header-actions,
+.speech-row,
+.text-entry-row,
+.send-controls,
+.character-counter,
+.checkbox-row,
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.connection-badge {
+  display: inline-flex;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+.state-connecting { background: #f59e0b; color: #111827; }
+.state-loading { background: #a78bfa; color: #111827; }
+.state-ready { background: #22c55e; color: #111827; }
+.state-reconnecting { background: #fbbf24; color: #111827; }
+.state-failed { background: #ef4444; color: #f8fafc; }
+
+.loading-indicator,
+.status-text,
+.browser-note,
+.face-note,
+.speech-note,
+.character-counter {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.avatar-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(240px, 350px);
+  gap: 1rem;
+}
+
+.avatar-scene {
+  min-height: 420px;
+  background: radial-gradient(circle at top, rgba(37, 99, 235, 0.18), rgba(15, 23, 42, 0.95) 40%);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  overflow: hidden;
+}
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.checkbox-row,
+.slider-row {
+  justify-content: space-between;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+  background: rgba(17, 24, 39, 0.8);
+}
+
+.checkbox-row input {
+  width: 1rem;
+  height: 1rem;
+}
+
+.slider-row {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.slider-row input {
+  width: 100%;
+}
+
+.summary-box {
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(17, 24, 39, 0.8);
+  padding: 0.75rem;
+  font-family: 'Consolas', monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #bfdbfe;
+}
+
+.input-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.transcript-box {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  background: rgba(17, 24, 39, 0.8);
+  padding: 0.8rem;
+}
+
+.text-entry-row {
+  align-items: flex-start;
+}
+
+.text-entry-row textarea {
+  flex: 1;
+  min-height: 110px;
+}
+
+.send-controls {
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 180px;
+}
+
+.send-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.microphone.active {
+  background: #dc2626;
+}
+
+.log-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.log-panel li {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  background: rgba(17, 24, 39, 0.8);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.debug-avatar-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.debug-avatar-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 860px) {
+  .avatar-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .text-entry-row {
+    flex-direction: column;
+  }
+
+  .send-controls {
+    width: 100%;
+  }
+}
