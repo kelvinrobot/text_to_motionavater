@@ -2,12 +2,108 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>text-to-sign</title>
+    <meta name="description" content="Text-to-sign motion viewer" />
+    <title>Text to Sign Motion</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main class="application-shell">
+        <header class="top-bar">
+          <div class="status-group">
+            <span id="connection-badge" class="connection-badge">Connecting</span>
+            <span id="session-id" class="session-id">session_id=</span>
+            <span id="loading-text" class="loading-text" hidden>Model is loading, this can take a few minutes</span>
+          </div>
+
+          <div class="header-actions">
+            <button id="mean-pose-button" type="button">Show mean pose</button>
+            <button id="live-motion-button" type="button">Show live motion</button>
+          </div>
+        </header>
+
+        <section class="avatar-panel">
+          <div id="avatar-container" class="avatar-scene" aria-label="Avatar viewport"></div>
+
+          <aside class="control-panel">
+            <label class="checkbox-row">
+              <input id="swap-body-sides" type="checkbox" />
+              <span>Swap sides for body joints</span>
+            </label>
+            <label class="checkbox-row">
+              <input id="swap-hands" type="checkbox" />
+              <span>Swap sides for hands</span>
+            </label>
+            <label class="checkbox-row">
+              <input id="negate-first-hand" type="checkbox" />
+              <span>Negate y and z for the first hand block</span>
+            </label>
+            <label class="checkbox-row">
+              <input id="negate-second-hand" type="checkbox" />
+              <span>Negate y and z for the second hand block</span>
+            </label>
+            <label class="checkbox-row">
+              <input id="negate-first-body-joint" type="checkbox" />
+              <span>Negate first body joint axes</span>
+            </label>
+            <label class="checkbox-row">
+              <input id="negate-second-body-joint" type="checkbox" />
+              <span>Negate second body joint axes</span>
+            </label>
+
+            <label class="checkbox-row">
+              <input id="auto-send-checkbox" type="checkbox" checked />
+              <span>Send automatically after speaking</span>
+            </label>
+
+            <div class="slider-row">
+              <label for="finger-scale-slider">Finger rotation scale</label>
+              <input id="finger-scale-slider" type="range" min="0" max="1.5" step="0.01" value="1" />
+              <strong id="finger-scale-value">1.00</strong>
+            </div>
+
+            <div id="settings-readout" class="summary-box">swapBodySides=false, swapHands=false, negateFirstHand=false, negateSecondHand=false, negateFirstBodyJoint=false, negateSecondBodyJoint=false, fingerRotationScale=1.00</div>
+          </aside>
+        </section>
+
+        <section class="input-panel">
+          <div class="speech-row">
+            <button id="microphone-button" type="button" class="microphone">Microphone</button>
+            <span class="speech-note">Chrome sends microphone audio to Google for transcription.</span>
+          </div>
+
+          <div id="transcript-box" class="transcript-box">No transcript yet</div>
+
+          <div class="text-entry-row">
+            <textarea id="text-box" rows="4" maxlength="400" placeholder="Type text to send to the sign model"></textarea>
+
+            <div class="send-controls">
+              <label>
+                <span>Pace</span>
+                <input id="pace-slider" type="range" min="0.5" max="2" step="0.1" value="1" />
+              </label>
+              <span id="pace-value" class="pace-value">1.0×</span>
+              <button id="send-button" type="button">Send</button>
+              <button id="cancel-button" type="button" class="secondary">Cancel</button>
+            </div>
+          </div>
+
+          <div id="character-counter" class="character-counter">0 / 400 characters</div>
+          <div id="status-text" class="status-text">Ready for input</div>
+        </section>
+
+        <section class="log-panel">
+          <h2>Request log</h2>
+          <ul id="request-log-list">
+            <li>No requests yet.</li>
+          </ul>
+        </section>
+
+        <div id="face-note" class="face-note">Face expression is not rendered</div>
+        <div id="browser-note" class="browser-note">Chrome sends microphone audio to Google for transcription.</div>
+      </main>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
