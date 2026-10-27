@@ -45,6 +45,7 @@ export class VrmAvatarDriver implements AvatarDriver {
   private clock: THREE.Clock;
   private rootElement: HTMLDivElement;
   private avatar: VRM | null;
+  private fallbackRig: THREE.Group | null;
   private pendingApplyFrame: Float32Array | null;
   private warnedBones: Set<string>;
   private readyCallbacks: Array<() => void>;
@@ -90,6 +91,7 @@ export class VrmAvatarDriver implements AvatarDriver {
 
     this.clock = new THREE.Clock();
     this.avatar = null;
+    this.fallbackRig = null;
     this.pendingApplyFrame = null;
     this.warnedBones = new Set();
     this.readyCallbacks = [];
@@ -215,6 +217,28 @@ export class VrmAvatarDriver implements AvatarDriver {
       this.avatar = null;
     }
 
+    if (this.fallbackRig) {
+      this.scene.remove(this.fallbackRig);
+      this.fallbackRig.traverse((object) => {
+        const mesh = object as THREE.Mesh;
+        if (mesh.geometry) {
+          mesh.geometry.dispose();
+        }
+
+        const material = mesh.material;
+        if (material) {
+          if (Array.isArray(material)) {
+            for (const entry of material) {
+              entry.dispose();
+            }
+          } else {
+            material.dispose();
+          }
+        }
+      });
+      this.fallbackRig = null;
+    }
+
     this.renderer.dispose();
     this.rootElement.remove();
     this.readyCallbacks = [];
@@ -270,7 +294,22 @@ export class VrmAvatarDriver implements AvatarDriver {
 
         const vrm = gltf.userData.vrm as VRM | undefined;
         if (!vrm) {
-          this.emitError('Avatar file not found. Place avatar.vrm in the public folder');
+          this.showFallbackAvatar('The configured VRM file could not be loaded. Showing a fallback avatar instead.');
+          return;
+        }
+
+        const requiredBones: VRMHumanBoneName[] = [
+          'hips',
+          'neck',
+          'leftUpperArm',
+          'rightUpperArm',
+          'leftHand',
+          'rightHand',
+        ];
+
+        const missingBones = requiredBones.filter((boneName) => !vrm.humanoid?.getNormalizedBoneNode(boneName));
+        if (!vrm.humanoid || missingBones.length > 0) {
+          this.showFallbackAvatar(`The loaded avatar is not a valid sign-avatar VRM. Missing required bones: ${missingBones.join(', ') || 'humanoid rig'}.`);
           return;
         }
 
@@ -298,10 +337,86 @@ export class VrmAvatarDriver implements AvatarDriver {
       undefined,
       () => {
         if (!this.disposed) {
-          this.emitError('Avatar file not found. Place avatar.vrm in the public folder');
+          this.showFallbackAvatar('Avatar file not found. Add a VRM to the public folder or set VITE_AVATAR_MODEL_PATH. Showing a fallback avatar instead.');
         }
       },
     );
+  }
+
+  private showFallbackAvatar(message?: string): void {
+    if (this.fallbackRig) {
+      this.emitReady();
+      return;
+    }
+
+    const torsoMaterial = new THREE.MeshStandardMaterial({ color: '#60a5fa', roughness: 0.6, metalness: 0.2 });
+    const accentMaterial = new THREE.MeshStandardMaterial({ color: '#cbd5e1', roughness: 0.7 });
+    const root = new THREE.Group();
+    root.position.set(0, 0.25, 0);
+
+    const body = new THREE.Group();
+    const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.5, 1.15, 5, 10), torsoMaterial);
+    torso.position.y = 1.2;
+    body.add(torso);
+
+    const headPivot = new THREE.Group();
+    headPivot.position.y = 2.25;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.32, 20, 20), accentMaterial);
+    headPivot.add(head);
+    body.add(headPivot);
+
+    const leftArmPivot = new THREE.Group();
+    leftArmPivot.position.set(-0.72, 1.7, 0);
+    const leftArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.9, 4, 10), accentMaterial);
+    leftArm.position.y = -0.5;
+    leftArmPivot.add(leftArm);
+    body.add(leftArmPivot);
+
+    const rightArmPivot = new THREE.Group();
+    rightArmPivot.position.set(0.72, 1.7, 0);
+    const rightArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.9, 4, 10), accentMaterial);
+    rightArm.position.y = -0.5;
+    rightArmPivot.add(rightArm);
+    body.add(rightArmPivot);
+
+    const leftLegPivot = new THREE.Group();
+    leftLegPivot.position.set(-0.25, 0.2, 0);
+    const leftLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.22, 0.95, 4, 10), accentMaterial);
+    leftLeg.position.y = -0.7;
+    leftLegPivot.add(leftLeg);
+    body.add(leftLegPivot);
+
+    const rightLegPivot = new THREE.Group();
+    rightLegPivot.position.set(0.25, 0.2, 0);
+    const rightLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.22, 0.95, 4, 10), accentMaterial);
+    rightLeg.position.y = -0.7;
+    rightLegPivot.add(rightLeg);
+    body.add(rightLegPivot);
+
+    root.add(body);
+    root.userData = {
+      torso: body,
+      head: headPivot,
+      leftArm: leftArmPivot,
+      rightArm: rightArmPivot,
+      leftLeg: leftLegPivot,
+      rightLeg: rightLegPivot,
+    };
+    this.fallbackRig = root;
+    this.scene.add(root);
+
+    const bounds = new THREE.Box3().setFromObject(root);
+    const size = bounds.getSize(new THREE.Vector3());
+    const center = bounds.getCenter(new THREE.Vector3());
+    const radius = Math.max(size.x, size.y, size.z) * 0.8;
+    this.camera.position.set(0, 1.5, radius * 2.4);
+    this.camera.lookAt(center);
+    this.controls.target.copy(center);
+
+    if (message) {
+      this.emitError(message);
+    }
+    this.emitReady();
   }
 
   private emitReady(): void {
@@ -317,7 +432,14 @@ export class VrmAvatarDriver implements AvatarDriver {
   }
 
   private applyFrameData(frame: Float32Array): void {
-    if (!this.avatar || this.disposed) {
+    if (this.disposed) {
+      return;
+    }
+
+    if (!this.avatar) {
+      if (this.fallbackRig) {
+        this.applyFallbackFrame(frame);
+      }
       return;
     }
 
@@ -334,6 +456,51 @@ export class VrmAvatarDriver implements AvatarDriver {
     const secondHandJoints = smplxMapping.second_hand_block.joints as Array<{ vrm_bone: VRMHumanBoneName; columns: number[] }>;
     for (const joint of secondHandJoints) {
       this.applyJointRotation(joint.vrm_bone, frame, joint.columns);
+    }
+  }
+
+  private applyFallbackFrame(frame: Float32Array): void {
+    if (!this.fallbackRig) {
+      return;
+    }
+
+    const root = this.fallbackRig;
+    const torso = root.userData.torso as THREE.Group | undefined;
+    const head = root.userData.head as THREE.Group | undefined;
+    const leftArm = root.userData.leftArm as THREE.Group | undefined;
+    const rightArm = root.userData.rightArm as THREE.Group | undefined;
+    const leftLeg = root.userData.leftLeg as THREE.Group | undefined;
+    const rightLeg = root.userData.rightLeg as THREE.Group | undefined;
+
+    root.rotation.y = (frame[0] ?? 0) * 0.8;
+    root.rotation.x = (frame[3] ?? 0) * 0.4;
+
+    if (torso) {
+      torso.rotation.z = (frame[9] ?? 0) * 0.7;
+      torso.rotation.x = (frame[6] ?? 0) * 0.55;
+    }
+
+    if (head) {
+      head.rotation.y = (frame[12] ?? 0) * 0.8;
+      head.rotation.x = (frame[15] ?? 0) * 0.5;
+    }
+
+    if (leftArm) {
+      leftArm.rotation.z = (frame[30] ?? 0) * 1.2;
+      leftArm.rotation.x = (frame[31] ?? 0) * 0.8;
+    }
+
+    if (rightArm) {
+      rightArm.rotation.z = (frame[75] ?? 0) * -1.2;
+      rightArm.rotation.x = (frame[76] ?? 0) * 0.8;
+    }
+
+    if (leftLeg) {
+      leftLeg.rotation.x = (frame[90] ?? 0) * 0.7;
+    }
+
+    if (rightLeg) {
+      rightLeg.rotation.x = (frame[105] ?? 0) * 0.7;
     }
   }
 

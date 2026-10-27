@@ -49,22 +49,41 @@ textarea {
 }
 
 .application-shell {
-  width: min(1200px, 100%);
+  width: min(1400px, 100%);
   margin: 0 auto;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(300px, 420px);
+  gap: 1rem;
+  align-items: start;
 }
 
+.avatar-stage,
+.side-panel,
 .top-bar,
 .avatar-panel,
 .input-panel,
-.log-panel {
+.control-panel,
+.log-panel,
+.diagnostics-panel {
   background: rgba(15, 23, 42, 0.92);
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 14px;
   padding: 1rem;
+}
+
+.avatar-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 1rem;
 }
 
 .top-bar {
@@ -85,6 +104,10 @@ textarea {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+.speech-row {
+  justify-content: flex-start;
 }
 
 .connection-badge {
@@ -114,20 +137,22 @@ textarea {
 }
 
 .avatar-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(240px, 350px);
-  gap: 1rem;
+  display: block;
 }
 
 .avatar-scene {
-  min-height: 420px;
+  min-height: 560px;
+  height: min(72vh, 720px);
   background: radial-gradient(circle at top, rgba(37, 99, 235, 0.18), rgba(15, 23, 42, 0.95) 40%);
   border-radius: 12px;
   border: 1px solid rgba(148, 163, 184, 0.3);
   overflow: hidden;
 }
 
-.control-panel {
+.control-panel,
+.input-panel,
+.log-panel,
+.diagnostics-panel {
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
@@ -239,8 +264,23 @@ textarea {
 }
 
 @media (max-width: 860px) {
-  .avatar-panel {
+  .application-shell {
     grid-template-columns: 1fr;
+    padding: 0.75rem;
+  }
+
+  .side-panel {
+    position: static;
+  }
+
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .avatar-scene {
+    min-height: 420px;
+    height: 52vh;
   }
 
   .text-entry-row {
@@ -248,6 +288,35 @@ textarea {
   }
 
   .send-controls {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .application-shell {
+    padding: 0.5rem;
+    gap: 0.75rem;
+  }
+
+  .top-bar,
+  .avatar-stage,
+  .side-panel,
+  .input-panel,
+  .control-panel,
+  .log-panel,
+  .diagnostics-panel {
+    padding: 0.75rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .header-actions button,
+  .microphone,
+  .secondary {
     width: 100%;
   }
 }

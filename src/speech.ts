@@ -35,9 +35,13 @@ export function isSpeechRecognitionAvailable(): boolean {
 }
 
 export class SpeechToTextController {
-  private readonly recognition: SpeechRecognitionLike;
+  private readonly recognition: SpeechRecognitionLike | null;
   private isRecording = false;
   private finalTranscript = '';
+  private restartRequested = false;
+  private restartDelayMilliseconds = 300;
+  private retryCount = 0;
+  private readonly maximumRetries = 3;
   private readonly onInterim: (text: string) => void;
   private readonly onFinal: (text: string) => void;
   private readonly onStateChange: (isListening: boolean) => void;
@@ -54,7 +58,7 @@ export class SpeechToTextController {
       }).webkitSpeechRecognition;
 
     if (!recognitionAPI) {
-      this.recognition = null as unknown as SpeechRecognitionLike;
+      this.recognition = null;
       this.onInterim = options.onInterim;
       this.onFinal = options.onFinal;
       this.onStateChange = options.onStateChange;
@@ -73,32 +77,43 @@ export class SpeechToTextController {
     this.onError = options.onError;
 
     this.recognition.onresult = (event: SpeechRecognitionEventLike) => {
-      let nextInterimText = '';
-      let recognitionText = '';
+      let interimTextValue = '';
+      let combinedText = '';
 
       for (let index = 0; index < event.results.length; index += 1) {
-        const currentResult = event.results[index];
-        const transcript = currentResult[0]?.transcript ?? '';
-        recognitionText = `${recognitionText}${transcript}`;
+        const result = event.results[index];
+        const transcript = result[0]?.transcript ?? '';
+        combinedText = `${combinedText}${transcript}`;
 
         if (index === event.results.length - 1) {
-          nextInterimText = recognitionText;
+          interimTextValue = combinedText;
         }
       }
 
-      if (nextInterimText) {
-        this.onInterim(nextInterimText.trim());
+      if (interimTextValue.trim()) {
+        this.onInterim(interimTextValue.trim());
       }
 
-      this.finalTranscript = recognitionText.trim();
+      this.finalTranscript = combinedText.trim();
     };
 
     this.recognition.onend = () => {
-      if (this.finalTranscript) {
-        this.onFinal(this.finalTranscript);
+      if (this.isRecording) {
+        this.isRecording = false;
+        this.onStateChange(false);
       }
-      this.isRecording = false;
-      this.onStateChange(false);
+
+      if (this.finalTranscript.trim()) {
+        this.onFinal(this.finalTranscript.trim());
+      }
+
+      this.finalTranscript = '';
+
+      if (this.restartRequested) {
+        window.setTimeout(() => {
+          this.start();
+        }, this.restartDelayMilliseconds);
+      }
     };
   }
 
@@ -108,30 +123,61 @@ export class SpeechToTextController {
       return;
     }
 
+    this.restartRequested = true;
     this.finalTranscript = '';
     this.isRecording = true;
     this.onStateChange(true);
-    this.recognition.start();
+
+    try {
+      this.recognition.start();
+      this.retryCount = 0;
+    } catch {
+      this.retryCount += 1;
+      if (this.retryCount > this.maximumRetries) {
+        this.stop();
+        this.onError('Speech recognition failed multiple times.');
+        return;
+      }
+      window.setTimeout(() => {
+        this.start();
+      }, this.restartDelayMilliseconds);
+    }
   }
 
   public stop(): void {
-    if (!this.recognition || !this.isRecording) {
+    this.restartRequested = false;
+    this.finalTranscript = '';
+    if (!this.recognition) {
       this.isRecording = false;
       this.onStateChange(false);
       return;
     }
 
-    this.recognition.stop();
+    try {
+      this.recognition.stop();
+    } catch {
+      // ignore stop errors
+    }
+
     this.isRecording = false;
     this.onStateChange(false);
   }
 
   public close(): void {
+    this.restartRequested = false;
+    this.finalTranscript = '';
     if (!this.recognition) {
+      this.isRecording = false;
+      this.onStateChange(false);
       return;
     }
 
-    this.recognition.stop();
+    try {
+      this.recognition.stop();
+    } catch {
+      // ignore close errors
+    }
+
     this.isRecording = false;
     this.onStateChange(false);
   }

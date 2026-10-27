@@ -6,23 +6,29 @@ export const config = {
   apiBaseUrl:
     (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
     'https://remostartdev-text-to-signmotion.hf.space',
-  apiToken: (import.meta.env.VITE_API_TOKEN as string | undefined) ?? '',
   motionFps: smplx133Mapping.fps,
   frameDimension: smplx133Mapping.frame_dimension,
   paceMin: 0.5,
   paceMax: 2.0,
-  paceDefault: 1.0,
+  paceDefault: 0.9,
   healthPollIntervalMilliseconds: 3000,
   pingIntervalMs: 15000,
   reconnectBackoffMs: 1000,
   maxReconnectBackoffMs: 15000,
-  avatarModelPath: '/avatar.vrm',
-  voiceTranscriptionNotice: 'Chrome sends microphone audio to Google for transcription.',
+  avatarModelPath:
+    (import.meta.env.VITE_AVATAR_MODEL_PATH as string | undefined) ?? '/avatar.vrm',
 };
 
 export function getWebSocketUrl(): string {
-  const baseUrl = config.apiBaseUrl.replace(/^https:/, 'wss:').replace(/^http:/, 'ws:');
-  return `${baseUrl.replace(/\/$/, '')}/ws?token=${encodeURIComponent(config.apiToken)}`;
+  const sanitizedBaseUrl = config.apiBaseUrl.replace(/\/$/, '');
+  const upgradedBaseUrl = sanitizedBaseUrl.replace(/^https:/, 'wss:').replace(/^http:/, 'ws:');
+
+  const tokenValue = (import.meta.env.VITE_API_TOKEN as string | undefined)?.trim();
+  if (tokenValue) {
+    return `${upgradedBaseUrl}/ws?token=${encodeURIComponent(tokenValue)}`;
+  }
+
+  return `${upgradedBaseUrl}/ws`;
 }
 
 export function getMotionWebSocketUrl(): string {
@@ -30,6 +36,6 @@ export function getMotionWebSocketUrl(): string {
 }
 
 export function getHealthUrl(): string {
-  const baseUrl = config.apiBaseUrl.replace(/\/$/, '');
-  return `${baseUrl}/health`;
+  const sanitizedBaseUrl = config.apiBaseUrl.replace(/\/$/, '');
+  return `${sanitizedBaseUrl}/health`;
 }

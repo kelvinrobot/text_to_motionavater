@@ -47,9 +47,6 @@ export interface ClientGenerateMessage {
   id: string;
   text: string;
   pace: number;
-  retrieval?: boolean;
-  sample?: boolean;
-  seed?: number;
 }
 
 export interface ClientCancelMessage {
@@ -187,13 +184,17 @@ export function parseBinaryMotionBlock(buffer: ArrayBuffer): BinaryMotionBlock |
   const requestIndex = view.getUint32(0, true);
   const frameOffset = view.getUint32(4, true);
   const frameCount = view.getUint32(8, true);
-  const expectedLength = 12 + frameCount * 133 * 4;
 
-  if (buffer.byteLength !== expectedLength) {
+  const minimumLength = 12 + frameCount * 133 * 4;
+  if (buffer.byteLength !== minimumLength) {
     return null;
   }
 
-  const frames = new Float32Array(buffer, 12, frameCount * 133);
+  const frameVector = new Float32Array(buffer.slice(12));
+  const frames = new Float32Array(frameCount * 133);
+  for (let index = 0; index < frames.length; index += 1) {
+    frames[index] = frameVector[index];
+  }
 
   return {
     requestIndex,
